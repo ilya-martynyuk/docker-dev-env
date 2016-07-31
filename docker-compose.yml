@@ -1,0 +1,44 @@
+version: "2"
+
+services:
+  mysql_data:
+    container_name: dev_mysql_data
+    build: services/mysql_data
+
+  mysql:
+    container_name: dev_mysql
+    build: services/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Gd33JfdklsF
+      - MYSQL_DATABASE=dev_db
+    volumes:
+      - ./share:/share
+    volumes_from:
+      - mysql_data
+
+  php_myadmin:
+    container_name: dev_php_myadmin
+    image: nazarpc/phpmyadmin
+    ports:
+      - 2346:80
+    links:
+      - mysql
+    volumes:
+      - ./share:/share
+
+  php_apache:
+    build:
+      context: services/php_apache
+      args:
+        - username=imartynyuk
+    container_name: dev_php_apache
+    ports:
+      - 80:80
+    links:
+      - mysql
+    volumes:
+      - ./services/php_apache/logs:/var/log/apache2
+      - ./www:/var/www
+      - ./share:/share
+    stdin_open: true
+    tty: true
