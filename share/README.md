@@ -1,0 +1,1 @@
+This directory contains common data which can be shared between all containers
